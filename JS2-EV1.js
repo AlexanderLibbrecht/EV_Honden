@@ -46,19 +46,20 @@ xhttp.onload = function () {
 const promptUserforBreed = (mainBreeds, allData, callback) => {
     // Prompt the user to enter a breed to see its sub-breeds. The answer is processed in a callback function.
     rl.question("Please enter a breed to see its sub-breeds: ", (answer) => {
-        if (mainBreeds.includes(answer)) { // Check if the entered breed is in the list of main breeds
-            const subBreeds = allData[answer]; // Get the sub-breeds for the entered breed
+        let answerClean = answer.toLowerCase().trim(); // Convert the user's input to lowercase to ensure case-insensitive matching
+        if (mainBreeds.includes(answerClean)) { // Check if the entered breed is in the list of main breeds
+            const subBreeds = allData[answerClean]; // Get the sub-breeds for the entered breed
             if (subBreeds.length > 0) { // Check if there are any sub-breeds
-                console.log(`The sub-breeds of ${answer} are: ${subBreeds.join(', ')}. A web page will be created containing images of these sub-breeds.`); // Print the sub-breeds
+                console.log(`The sub-breeds of ${answerClean} are: ${subBreeds.join(', ')}. A web page will be created containing images of these sub-breeds.`); // Print the sub-breeds
                 try {
-                    callback(answer, subBreeds, getImageUrls); // Call the callback function to start fetching the image URLs for the breed and its sub-breeds. 
+                    callback(answerClean, subBreeds, getImageUrls); // Call the callback function to start fetching the image URLs for the breed and its sub-breeds. 
                 } catch (error) {
                     console.log(`Error}: ${error.message}`); // Log an error message if there was an issue fetching the image or the callback function
                 }
             } else {
-                console.log(`${answer} has no sub-breeds, but a webpage will be created for ${answer}`); // Inform the user if there are no sub-breeds
+                console.log(`${answerClean} has no sub-breeds, but a webpage will be created for ${answerClean}`); // Inform the user if there are no sub-breeds
                 try {
-                    callback(answer, null, getImageUrls); // Call the callback function to start fetching the image URLs for the breed without a sub-breed. 
+                    callback(answerClean, null, getImageUrls); // Call the callback function to start fetching the image URLs for the breed without a sub-breed. 
                 } catch (error) {
                     console.log(`Error}: ${error.message}`); // Log an error message if there was an issue fetching the image or the callback function
                 }
