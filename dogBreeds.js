@@ -33,7 +33,7 @@ xhttp.onload = function () {
     console.log("Here are the main breeds of dogs:"); // Print a message before listing the breeds
     mainBreeds.forEach(breed => console.log(breed)); // Print each main breed with the forEach method
 
-    promptUserforBreed(mainBreeds, allData); // Call the function to prompt the user for a breed and display
+    promptUserforBreed(mainBreeds, allData, getImageUrl); // Call the function to prompt the user for a breed and display
 };
 
 /**
@@ -44,7 +44,7 @@ xhttp.onload = function () {
  * @param {Array} mainBreeds contains the list of main breeds retrieved from the API, used to check if the entered breed is valid and to display the list of main breeds to the user.
  * @param {Object} allData contains all the breeds and sub-breeds retrieved from the API, used to get the sub-breeds for the entered breed and to fetch the image URL for the breed or sub-breed.
  */
-const promptUserforBreed = (mainBreeds, allData) => {
+const promptUserforBreed = (mainBreeds, allData, callback) => {
     // Prompt the user to enter a breed to see its sub-breeds. The answer is processed in a callback function.
     rl.question("Please enter a breed to see its sub-breeds: ", (answer) => {
         if (mainBreeds.includes(answer)) { // Check if the entered breed is in the list of main breeds
@@ -52,7 +52,8 @@ const promptUserforBreed = (mainBreeds, allData) => {
             if (subBreeds.length > 0) { // Check if there are any sub-breeds
                 console.log(`The sub-breeds of ${answer} are: ${subBreeds.join(', ')}, a file will be created with a picture of the first sub-breed`); // Print the sub-breeds
                 try {
-                    getImageUrl(answer, subBreeds[0], getAndSaveImage); // Call the function to get and save an image of the first sub-breed. The callback function is passed as an argument to handle the image retrieval and saving process
+                    callback(answer, subBreeds[0], getAndSaveImage); // Call the callback function to get and save an image of the first sub-breed. The callback function is passed as an argument to handle the image retrieval and saving process
+                   // getImageUrl(answer, subBreeds[0], getAndSaveImage); // Call the function to get and save an image of the first sub-breed. The callback function is passed as an argument to handle the image retrieval and saving process
                 } catch (error) {
                     console.log(`Error}: ${error.message}`); // Log an error message if there was an issue fetching the image or the callback function
                 }
@@ -60,7 +61,8 @@ const promptUserforBreed = (mainBreeds, allData) => {
             } else {
                 console.log(`${answer} has no sub-breeds, but a file will be created with a picture of ${answer}`); // Inform the user if there are no sub-breeds
                 try {
-                    getImageUrl(answer, null, getAndSaveImage); // Call the function to get and save an image of the breed without a sub-breed. The callback function is passed as an argument to handle the image retrieval and saving process
+                    callback(answer, null, getAndSaveImage); // Call the callback function to get and save an image of the breed without a sub-breed. The callback function is passed as an argument to handle the image retrieval and saving process
+                    //getImageUrl(answer, null, getAndSaveImage); // Call the function to get and save an image of the breed without a sub-breed. The callback function is passed as an argument to handle the image retrieval and saving process
                 } catch (error) {
                     console.log(`Error}: ${error.message}`); // Log an error message if there was an issue fetching the image or the callback function
                 }
@@ -81,8 +83,6 @@ const promptUserforBreed = (mainBreeds, allData) => {
  * @param {callback} callback The callback function to be called with the image URL and file name after 
  * fetching the image URL from the API. The callback function is responsible for handling the image retrieval and saving process, 
  * allowing for separation of concerns and modularity in the code.
-    
- }} callback 
  */
 const getImageUrl = (breed, subBreed, callback) => {
     let urlParameter = ''; // Initialize an empty string to hold the URL parameter for the API request
